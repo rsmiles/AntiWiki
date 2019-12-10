@@ -1,25 +1,34 @@
-import os
-import subprocess
+import os, subprocess
 
-CONVERT_DIR='./tmp'
+CONVERT_PARENT = '/tmp/AntiWiki/'
 
-def add_navbar():
-    navbar = """\
+CONVERT_DIR=CONVERT_PARENT + str(os.getpid()) + '/'
+
+if not os.path.isdir(CONVERT_PARENT):
+    os.mkdir(CONVERT_PARENT)
+
+def navbar():
+    bar = """\
 \   <div class="navbar">
 \	<a href="#download">Download</a>
 \	<a href="#upload_revision">Upload Revision</a>
 \    </div>"""
 
-def convert_doc(odt, html):
+def convert(odt, html):
+    os.mkdir(CONVERT_DIR)
     fname = os.path.basename(odt)
-    outdir = os.path.dirname(html)
+    outdir = os.path.dirname(html) + '/'
     outname = os.path.basename(os.path.splitext(html)[0])
-    subprocess.run(['cp', 'odt', CONVERT_DIR + fname])
-    subprocess.run(['soffice', '--headless', '--convert', 'html', CONVERT_DIR + fname])
+    subprocess.run(['cp', odt, CONVERT_DIR + fname])
+    olddir=os.getcwd()
+    os.chdir(CONVERT_DIR)
+    subprocess.run(['soffice', '--headless', '--convert-to', 'html', fname])
+    os.chdir(olddir)
     for f in os.listdir(CONVERT_DIR):
         if f != fname:
             ext = os.path.splitext(f)[1]
-            os.rename(CONVERT_DIR + '/' + f, outdir + '/' + outname + ext)
-        os.remove(CONVERT_DIR + '/' + fname)
-
+            os.rename(CONVERT_DIR + f, outdir + outname + ext)
+    for f in os.listdir(CONVERT_DIR):
+        os.remove(CONVERT_DIR + '/' + f)
+    os.rmdir(CONVERT_DIR)
 
