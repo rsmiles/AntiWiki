@@ -7,19 +7,20 @@ CONVERT_DIR=CONVERT_PARENT + str(os.getpid()) + '/'
 if not os.path.isdir(CONVERT_PARENT):
     os.mkdir(CONVERT_PARENT)
 
-def navbar(doc):
-    bar = """\
-\   <div class="navbar">
-\	\	<a href="#download">Download</a>
-\	\	<a href="#upload_revision">Upload Revision</a>
-\    </div>\n"""
+def add_navbar(doc):
+	bar = """\
+<div class="navbar">
+	<a href="#download">Download</a>
+	<a href="#upload_revision">Upload Revision</a>
+</div>\n"""
+
 	with open(doc, 'r') as f:
 		global cont
 		cont = f.read()
 
 	newdoc = doc + '.tmp'
-	with open(doc + '.tmp') as f:
-		cont.write(bar + doc)
+	with open(doc + '.tmp', 'w') as f:
+		f.write(bar + cont)
 
 	os.remove(doc)
 	os.rename(newdoc, doc)
