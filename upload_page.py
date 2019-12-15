@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import cgi, cgitb, os
 
 cgitb.enable()
@@ -6,8 +8,7 @@ qstring = os.environ['QUERY_STRING']
 
 doc = qstring.split('=')[1]
 
-output = """\
-HTTP/1.0 200 OK
+output = """HTTP/1.0 200 OK
 Content-Type: text/html
 
 <html>

@@ -11,7 +11,7 @@ def add_navbar(doc):
 	bar = """
 <div class="navbar">
 	<a href="#download">Download</a>
-	<a href="/cgi-bin/upload.py?doc={0}">Upload Revision</a>
+	<a href="/cgi-bin/upload_page.py?doc={0}">Upload Revision</a>
 </div>\n""".format(doc)
 
 	with open(doc, 'r') as f:
