@@ -1,6 +1,6 @@
 import os, subprocess
 
-CONVERT_PARENT = '/tmp/AntiWiki/'
+CONVERT_PARENT = '/tmp/Antiwiki/'
 
 CONVERT_DIR=CONVERT_PARENT + str(os.getpid()) + '/'
 
@@ -29,6 +29,8 @@ def convert(odt, html):
     os.mkdir(CONVERT_DIR)
     fname = os.path.basename(odt)
     outdir = os.path.dirname(html) + '/'
+    if outdir == '/': # make sure we don't accidentally try to place output in root
+        outdir = ''
     outname = os.path.basename(os.path.splitext(html)[0])
     subprocess.run(['cp', odt, CONVERT_DIR + fname])
     olddir=os.getcwd()

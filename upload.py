@@ -1,10 +1,20 @@
+#!/usr/bin/env python3
+
 import cgi, cgitb, os
 
 cgitb.enable()
+form = cgi.FieldStorage()
 
-qstring = os.environ['QUERY_STRING']
+result = ''
 
-doc = qstring.split('=')[1]
+fileitem=form['filename']
+if fileitem.filename:
+    filename = os.path.basename(fileitem.filename.replace('\\', '/'))
+    with open('/tmp/' + filename, 'wb') as f:
+        f.write(fileitem.file.read())
+    result = 'File "' + filename + '" uploaded'
+else:
+    result = 'No file was provided'
 
 output = """\
 HTTP/1.0 200 OK
@@ -12,13 +22,10 @@ Content-Type: text/html
 
 <html>
 <body>
-	<p>Upload Revision of {0}.
-	<form enctype="multipart/form-data" action="/cgi-bin/upload.py" method="post">
-		<p>Select File: <input type="file" name="filename"/>
-		<p><input type="submit" value="upload"/>
-	</form>
+    <p>{}</p>
 </body>
-</html>""".format(doc)
+</html>\
+""".format(result)
 
 print(output)
 
