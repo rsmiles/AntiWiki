@@ -8,11 +8,11 @@ if not os.path.isdir(CONVERT_PARENT):
     os.mkdir(CONVERT_PARENT)
 
 def add_navbar(doc):
-	bar = """\
+	bar = """
 <div class="navbar">
 	<a href="#download">Download</a>
-	<a href="#upload_revision">Upload Revision</a>
-</div>\n"""
+	<a href="/cgi-bin/upload.py?doc={0}">Upload Revision</a>
+</div>\n""".format(doc)
 
 	with open(doc, 'r') as f:
 		global cont
