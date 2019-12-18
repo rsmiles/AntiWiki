@@ -14,11 +14,11 @@ if not os.path.isdir(CONVERT_PARENT):
 if not os.path.isdir(ODT):
     os.mkdir(ODT)
 
-def add_navbar(doc):
+def add_navbar(doc, truepath):
 	bar = """<div class="navbar">
 	<a href="#download">Download</a>
 	<a href="/cgi-bin/upload_page.py?doc={0}">Upload Revision</a>
-</div>\n""".format(doc)
+</div>\n""".format(truepath)
 
 	with open(doc, 'r') as f:
 		global cont
@@ -40,7 +40,7 @@ def convert(odt, html_dir):
         os.remove(CONVERT_DIR) + docname + '.html'
         os.rmdir(CONVERT_DIR)
         raise Exception('Document conversion failed! Return code:' + str(soffice_result.returncode))
-    add_navbar(CONVERT_DIR + docname + '.html')
+    add_navbar(CONVERT_DIR + docname + '.html', html_dir + docname + '.html')
     os.replace(CONVERT_DIR + docname + '.html', html_dir + docname + '.html')
     os.rmdir(CONVERT_DIR)
 
