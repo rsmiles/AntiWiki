@@ -1,4 +1,4 @@
-import os, subprocess
+import os, subprocess, getpass
 
 CONVERT_PARENT = '/tmp/Antiwiki/'
 
@@ -15,8 +15,7 @@ if not os.path.isdir(ODT):
     os.mkdir(ODT)
 
 def add_navbar(doc):
-	bar = """
-<div class="navbar">
+	bar = """<div class="navbar">
 	<a href="#download">Download</a>
 	<a href="/cgi-bin/upload_page.py?doc={0}">Upload Revision</a>
 </div>\n""".format(doc)
@@ -32,23 +31,16 @@ def add_navbar(doc):
 	os.remove(doc)
 	os.rename(newdoc, doc)
 
-def convert(odt, html):
+def convert(odt, html_dir):
     os.mkdir(CONVERT_DIR)
-    fname = os.path.basename(odt)
-    outdir = os.path.dirname(html) + '/'
-    if outdir == '/': # make sure we don't accidentally try to place output in root
-        outdir = ''
-    outname = os.path.basename(os.path.splitext(html)[0])
-    subprocess.run(['cp', odt, CONVERT_DIR + fname])
-    olddir=os.getcwd()
-    os.chdir(CONVERT_DIR)
-    subprocess.run(['soffice', '--headless', '--convert-to', 'html', fname])
-    os.chdir(olddir)
-    for f in os.listdir(CONVERT_DIR):
-        if f != fname:
-            ext = os.path.splitext(f)[1]
-            os.rename(CONVERT_DIR + f, outdir + outname + ext)
-    for f in os.listdir(CONVERT_DIR):
-        os.remove(CONVERT_DIR + '/' + f)
+    docname = os.path.basename(os.path.splitext(odt)[0])
+
+    soffice_result = subprocess.run(['soffice', '--headless', '--convert-to', 'html:HTML', '--outdir', CONVERT_DIR, odt])
+    if soffice_result.returncode != 0:
+        os.remove(CONVERT_DIR) + docname + '.html'
+        os.rmdir(CONVERT_DIR)
+        raise Exception('Document conversion failed! Return code:' + str(soffice_result.returncode))
+    add_navbar(CONVERT_DIR + docname + '.html')
+    os.replace(CONVERT_DIR + docname + '.html', html_dir + docname + '.html')
     os.rmdir(CONVERT_DIR)
 
