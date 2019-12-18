@@ -1,7 +1,38 @@
 #!/usr/bin/env python3
 
-import cgi, cgitb, os
-from lib import *
+import cgi, cgitb, os, subprocess
+from config import *
+
+def add_navbar(doc, truepath):
+	bar = """<div class="navbar">
+	<a href="#download">Download</a>
+	<a href="/cgi-bin/upload_page.py?doc={0}">Upload Revision</a>
+</div>\n""".format(truepath)
+
+	with open(doc, 'r') as f:
+		global cont
+		cont = f.read()
+
+	newdoc = doc + '.tmp'
+	with open(doc + '.tmp', 'w') as f:
+		f.write(bar + cont)
+
+	os.remove(doc)
+	os.rename(newdoc, doc)
+
+def convert(odt, html_dir):
+    os.mkdir(CONVERT_DIR)
+    docname = os.path.basename(os.path.splitext(odt)[0])
+
+    soffice_result = subprocess.run(['soffice', '--headless', '--convert-to', 'html:HTML', '--outdir', CONVERT_DIR, ODT + odt])
+    if soffice_result.returncode != 0:
+        os.remove(CONVERT_DIR) + docname + '.html'
+        os.rmdir(CONVERT_DIR)
+        raise Exception('Document conversion failed! Return code:' + str(soffice_result.returncode))
+    add_navbar(CONVERT_DIR + docname + '.html', html_dir + docname + '.html')
+    os.replace(CONVERT_DIR + docname + '.html', WEB_ROOT + html_dir + docname + '.html')
+    os.rmdir(CONVERT_DIR)
+
 
 cgitb.enable()
 form = cgi.FieldStorage()
@@ -17,10 +48,8 @@ if fileitem.filename:
     with open(ODT + doc + '.odt', 'wb') as f:
         f.write(fileitem.file.read())
     result = """<p>FILE "{0}" uploaded.</p>
-    <a href="/{1}.html">click here to return to {1}</a>
-    <p>convert src = {2}</p>
-    <p>convert dest = {3}</p>""".format(filename, doc, ODT + doc + '.odt', WEB_ROOT + doc + '.html')
-    convert(ODT + doc + '.odt', WEB_ROOT + os.path.dirname(doc))
+    <a href="/{1}.html">click here to return to {1}</a>""".format(filename, doc, ODT + doc + '.odt', WEB_ROOT + doc + '.html')
+    convert(doc + '.odt', os.path.dirname(doc))
 else:
     result = '<p>No file was provided<\p>'
 
