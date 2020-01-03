@@ -7,6 +7,7 @@ def add_navbar(doc, truepath):
 	odtpath = os.path.splitext(truepath)[0] + '.odt'
 
 	bar = """<div class="navbar">
+	<a href="/pages">Explore</a>
 	<a href="/odt/{0}">Download</a>
 	<a href="/cgi-bin/upload_page.py?doc={1}">Upload Revision</a>
 </div>\n""".format(odtpath, truepath)
