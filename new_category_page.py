@@ -14,7 +14,7 @@ Content-Type: text/html
 <body>
 	<p>Upload Revision of {0}.
 	<form enctype="multipart/form-data" action="/cgi-bin/new_category.py?category={0}" method="post">
-		<p>Category Name: <input type="text" id="category"/>
+		<p>Category Name: <input type="text" id="{0}"/>
 		<p><input type="submit" value="create"/>
 	</form>
 </body>

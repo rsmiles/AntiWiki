@@ -3,39 +3,6 @@
 import cgi, cgitb, os, subprocess
 from config import *
 
-def add_navbar(doc, truepath):
-	odtpath = os.path.splitext(truepath)[0] + '.odt'
-
-	bar = """<div class="navbar">
-	<a href="/pages">Explore</a>
-	<a href="/odt/{0}">Download</a>
-	<a href="/cgi-bin/upload_page.py?doc={1}">Upload Revision</a>
-</div>\n""".format(odtpath, truepath)
-
-	with open(doc, 'r') as f:
-		global cont
-		cont = f.read()
-
-	newdoc = doc + '.tmp'
-	with open(doc + '.tmp', 'w') as f:
-		f.write(bar + cont)
-
-	os.replace(newdoc, doc)
-
-def convert(odt, html_dir):
-	os.mkdir(CONVERT_DIR)
-	docname = os.path.basename(os.path.splitext(odt)[0])
-
-	soffice_result = subprocess.run(['soffice', '--headless', '--convert-to', 'html:HTML', '--outdir', CONVERT_DIR, ODT + odt])
-	if soffice_result.returncode != 0:
-		os.remove(CONVERT_DIR) + docname + '.html'
-		os.rmdir(CONVERT_DIR)
-		raise Exception('Document conversion failed! Return code:' + str(soffice_result.returncode))
-	add_navbar(CONVERT_DIR + docname + '.html', html_dir + docname + '.html')
-	os.replace(CONVERT_DIR + docname + '.html', WEB_ROOT + html_dir + docname + '.html')
-	os.rmdir(CONVERT_DIR)
-
-
 cgitb.enable()
 form = cgi.FieldStorage()
 

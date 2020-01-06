@@ -1,5 +1,7 @@
 import os
 
+WEB_USER = 'www-data'
+
 CONVERT_PARENT = '/tmp/Antiwiki/'
 
 CONVERT_DIR=CONVERT_PARENT + str(os.getpid()) + '/'
