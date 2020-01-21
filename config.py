@@ -2,17 +2,17 @@ import os
 
 WEB_USER = 'www-data'
 
-CONVERT_PARENT = '/tmp/Antiwiki/'
+CONVERT_ROOT = '/tmp/AntiWiki/'
 
-CONVERT_DIR=CONVERT_PARENT + str(os.getpid()) + '/'
+CONVERT_DIR=CONVERT_ROOT + str(os.getpid()) + '/'
 
 WEB_ROOT = '/var/www/html/'
 
+CGI_BIN = WEB_ROOT + 'cgi_bin/'
+
+PAGES = WEB_ROOT + 'pages/'
+
 ODT = WEB_ROOT + 'odt/'
 
-if not os.path.isdir(CONVERT_PARENT):
-    os.mkdir(CONVERT_PARENT)
-
-if not os.path.isdir(ODT):
-    os.mkdir(ODT)
+ODT_PAGES = ODT + 'pages/'
 
